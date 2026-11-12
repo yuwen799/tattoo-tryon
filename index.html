@@ -1,0 +1,461 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tattoo Try-On · ys.tattoos</title>
+<meta name="description" content="See any tattoo design on your own skin before you commit. Free, private, runs in your browser. By Yuwen Su (ys.tattoos, Toronto).">
+<meta property="og:title" content="Tattoo Try-On · ys.tattoos">
+<meta property="og:description" content="See any tattoo design on your own skin before you commit. Free and private.">
+<meta property="og:type" content="website">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+html{-webkit-text-size-adjust:100%}body{margin:0}[hidden]{display:none!important}
+/* Same tokens and type as the booking page, so the two read as one brand. */
+:root{
+  --paper:#f5f2e9; --surface:#fffdf7; --ink:#141a2e; --muted:#5d6479; --line:#d9d4c5;
+  --blue:#2261e9; --blue-ink:#ffffff; --blue-soft:#e3ebfd; --accent-text:#1c50c8;
+  --display:"Space Grotesk","PingFang SC","Hiragino Sans GB","Microsoft YaHei","Noto Sans SC",sans-serif;
+  --body:"Inter","PingFang SC","Hiragino Sans GB","Microsoft YaHei","Noto Sans SC",system-ui,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,"SFMono-Regular",Menlo,Consolas,"PingFang SC",monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --paper:#0e1324; --surface:#161c33; --ink:#eef0f7; --muted:#a0a7bd; --line:#2b3350;
+    --blue:#2f66e6; --blue-soft:#1c2a55; --accent-text:#8fb0ff; color-scheme:dark;
+  }
+}
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.55}
+.wrap{max-width:1040px;margin:0 auto;padding-block:24px 64px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  display:grid;gap:24px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.brand{color:inherit;text-decoration:none;font-family:var(--display);font-weight:600;letter-spacing:.01em}
+.top-right{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.iglink{color:var(--accent-text);font-weight:600;font-size:14px;text-underline-offset:3px}
+a.btn{text-decoration:none}
+.btn.small{padding:5px 10px;font-size:12px}
+.ticket{position:relative;overflow:hidden;background:var(--blue);color:var(--blue-ink);border-radius:4px;padding:20px 18px;display:grid;gap:12px}
+.ticket::after{content:"";position:absolute;right:0;top:0;width:120px;height:90px;pointer-events:none;opacity:.28;
+  background-image:radial-gradient(var(--blue-ink) 1.3px,transparent 1.7px);background-size:8px 8px;
+  -webkit-mask-image:linear-gradient(225deg,#000,transparent 70%);mask-image:linear-gradient(225deg,#000,transparent 70%)}
+.ticket h3{margin:0;font:600 12px var(--mono);letter-spacing:.14em;text-transform:uppercase}
+.ticket p{margin:0;font-family:var(--display);font-size:1.25rem;line-height:1.25;font-weight:600}
+.ticket .btn{background:var(--blue-ink);border-color:var(--blue-ink);color:#1c50c8;font-size:15px;padding:12px 18px}
+.ticket .more{color:var(--blue-ink);font-size:13px;text-underline-offset:3px}
+.foot{font-size:13px;color:var(--muted);margin:0}
+.foot a{color:var(--accent-text)}
+.brand span{color:var(--muted);font-weight:500}
+.lang{display:flex;border:1px solid var(--line);border-radius:999px;overflow:hidden}
+.lang button{font:500 13px var(--body);padding:6px 14px;border:0;background:transparent;color:var(--muted);cursor:pointer}
+.lang button[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
+.note{font-size:13px;color:var(--muted);border:1px dashed var(--line);border-radius:4px;padding:8px 12px;margin:0}
+.intro{display:grid;gap:8px}
+h1{font-family:var(--display);font-size:clamp(2.1rem,6vw,3.4rem);line-height:1.02;margin:0;letter-spacing:-.02em;text-wrap:balance}
+.lede{margin:0;max-width:52ch;color:var(--muted);font-size:1.05rem}
+.layout{display:grid;gap:20px;grid-template-areas:"a" "stage" "b"}
+.col-a{grid-area:a}.col-b{grid-area:b}.stage-col{grid-area:stage;min-width:0}
+.col-a,.col-b{display:grid;gap:20px;align-content:start;min-width:0}
+.step{background:var(--surface);border:1px solid var(--line);border-radius:4px;padding:22px 20px;display:grid;gap:18px;min-width:0}
+.step-head{display:flex;align-items:baseline;gap:12px}
+.no{font:600 12px var(--mono);letter-spacing:.08em;color:var(--accent-text);white-space:nowrap}
+h2{font-family:var(--display);font-size:1.35rem;margin:0;line-height:1.2}
+.field{display:grid;gap:8px;min-width:0}
+.lab{font-weight:600;font-size:.95rem;display:flex;justify-content:space-between;gap:12px}
+.lab output{font:400 12px var(--mono);color:var(--muted)}
+.hint{font-size:13px;color:var(--muted);margin:0}
+button:focus-visible,.chip:has(input:focus-visible),.sr:focus-visible + label,input:focus-visible{outline:2px solid var(--accent-text);outline-offset:2px}
+.sr{position:absolute;width:1px;height:1px;opacity:0;overflow:hidden}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font:600 14px var(--body);cursor:pointer;
+  padding:9px 16px;border-radius:4px;border:1px solid var(--ink);background:transparent;color:var(--ink);width:fit-content}
+.btn.primary{background:var(--blue);border-color:var(--blue);color:var(--blue-ink);font-size:16px;padding:14px 22px}
+.row-btns{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.designs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.designs button{aspect-ratio:1;padding:6px;background:#fff;border:1px solid var(--line);border-radius:4px;cursor:pointer}
+.designs button[aria-pressed="true"]{border:2px solid var(--blue);padding:5px}
+.designs img{width:100%;height:100%;object-fit:contain;display:block}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{display:inline-flex;align-items:center;border:1px solid var(--line);border-radius:999px;padding:7px 14px;
+  font-size:14px;cursor:pointer;background:var(--paper);user-select:none}
+.chip input{position:absolute;opacity:0;width:1px;height:1px}
+.chip:has(input:checked){background:var(--ink);color:var(--paper);border-color:var(--ink)}
+input[type=range]{width:100%;accent-color:var(--blue);margin:0}
+.stage{background:var(--surface);border:1px solid var(--line);border-radius:4px;padding:10px;display:grid;gap:10px}
+.stage canvas{display:block;margin:0 auto;max-width:100%;max-height:68vh;width:auto;height:auto;border-radius:2px;
+  touch-action:none;cursor:grab;user-select:none;-webkit-user-select:none}
+.stage canvas:active{cursor:grabbing}
+.stage-foot{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;font:400 12px var(--mono);color:var(--muted)}
+.privacy{background:var(--blue-soft);border-radius:4px;padding:12px 14px;font-size:13px;margin:0}
+@media (min-width:860px){
+  .layout{grid-template-columns:minmax(0,1fr) 340px;grid-template-areas:"stage a" "stage b";align-items:start}
+  .stage-col{position:sticky;top:16px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <a class="brand" href="https://yuwensu.com/" target="_blank" rel="noopener">Yuwen Su <span>· ys.tattoos</span></a>
+    <div class="top-right">
+      <a class="iglink" href="https://www.instagram.com/ys.tattoos/" target="_blank" rel="noopener" data-i="ig_link"></a>
+      <a class="btn small" href="https://yuwen799.github.io/tattoo-booking/" data-i="book_link"></a>
+      <div class="lang" role="group" aria-label="Language">
+        <button type="button" id="lang-en" aria-pressed="true">EN</button>
+        <button type="button" id="lang-zh" aria-pressed="false">中文</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="intro">
+    <h1 data-i="h1"></h1>
+    <p class="lede" data-i="lede"></p>
+  </div>
+
+  <div class="layout">
+    <div class="col-a">
+      <section class="step">
+        <div class="step-head"><span class="no">Nº 01</span><h2 data-i="s1"></h2></div>
+        <div class="designs" id="designs"></div>
+        <div class="field">
+          <input class="sr" type="file" id="design-file" accept="image/*">
+          <label class="btn" for="design-file" data-i="design_btn"></label>
+          <p class="hint" data-i="design_hint"></p>
+        </div>
+      </section>
+
+      <section class="step">
+        <div class="step-head"><span class="no">Nº 02</span><h2 data-i="s2"></h2></div>
+        <div class="field">
+          <input class="sr" type="file" id="photo-file" accept="image/*">
+          <label class="btn" for="photo-file" data-i="photo_btn"></label>
+          <p class="hint" data-i="photo_hint"></p>
+        </div>
+        <p class="privacy" data-i="privacy"></p>
+      </section>
+    </div>
+
+    <div class="stage-col">
+      <div class="stage">
+        <canvas id="cv" width="900" height="1200" role="img" aria-label="Tattoo preview"></canvas>
+        <div class="stage-foot"><span id="photo-tag"></span><span data-i="gesture"></span></div>
+      </div>
+    </div>
+
+    <div class="col-b">
+      <section class="step">
+        <div class="step-head"><span class="no">Nº 03</span><h2 data-i="s3"></h2></div>
+        <div class="field">
+          <span class="lab" data-i="place"></span>
+          <div class="chips" id="places"></div>
+          <p class="hint" data-i="place_hint"></p>
+        </div>
+        <div class="field"><label class="lab" for="size"><span data-i="size"></span><output id="o-size"></output></label>
+          <input type="range" id="size" min="4" max="90" step="0.5"></div>
+        <div class="field"><label class="lab" for="rot"><span data-i="rot"></span><output id="o-rot"></output></label>
+          <input type="range" id="rot" min="-180" max="180" step="1"></div>
+        <div class="field"><label class="lab" for="curve"><span data-i="curve"></span><output id="o-curve"></output></label>
+          <input type="range" id="curve" min="0" max="100" step="1">
+          <p class="hint" data-i="curve_hint"></p></div>
+        <div class="field"><label class="lab" for="op"><span data-i="op"></span><output id="o-op"></output></label>
+          <input type="range" id="op" min="30" max="100" step="1"></div>
+        <div class="field"><label class="lab" for="clean"><span data-i="clean"></span><output id="o-clean"></output></label>
+          <input type="range" id="clean" min="0" max="100" step="1">
+          <p class="hint" data-i="clean_hint"></p></div>
+        <div class="chips">
+          <label class="chip"><input type="checkbox" id="mono"><span data-i="mono"></span></label>
+        </div>
+        <div class="row-btns">
+          <button type="button" class="btn primary" id="save" data-i="save"></button>
+          <button type="button" class="btn" id="reset" data-i="reset"></button>
+        </div>
+        <p class="hint" data-i="approx"></p>
+      </section>
+
+      <aside class="ticket">
+        <h3 data-i="cta_t"></h3>
+        <p data-i="cta_p"></p>
+        <a class="btn" href="https://yuwen799.github.io/tattoo-booking/" data-i="cta_btn"></a>
+        <a class="more" href="https://www.instagram.com/ys.tattoos/" target="_blank" rel="noopener" data-i="cta_ig"></a>
+      </aside>
+    </div>
+  </div>
+
+  <p class="foot"><span data-i="foot"></span> <a href="https://yuwensu.com/" target="_blank" rel="noopener">yuwensu.com</a></p>
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+
+/* ---------- copy ---------- */
+const T = {
+  en: {
+    ig_link: "See my tattoos on Instagram ↗", book_link: "Book a tattoo",
+    h1: "Try a tattoo on", lede: "See any design on your own skin before you commit. Free, private, and it all happens in your browser.",
+    cta_t: "Like how it looks?", cta_p: "I can tattoo it for you in Toronto. Get an instant estimate and hold a spot.",
+    cta_btn: "Book this tattoo →", cta_ig: "Or see my work on Instagram ↗",
+    foot: "Made by Yuwen Su, tattoo artist in Toronto.",
+    s1: "Pick a design", design_btn: "Upload your own image", design_hint: "Works best when the image is just the design on a plain light background. Crop out anything else first, like the bars around a screenshot.",
+    s2: "Add your photo", photo_btn: "Take or choose a photo", photo_hint: "A clear, well-lit photo of the spot, taken straight on.",
+    privacy: "Your photo stays on this device. It is drawn in your browser and never uploaded anywhere.",
+    s3: "Place it", place: "Placement", place_hint: "Sets a starting size and skin curve. Fine-tune below.",
+    size: "Size", rot: "Rotation", curve: "Skin curve", curve_hint: "Wraps the design around a rounder spot like a wrist or ankle.",
+    op: "Ink strength", clean: "Clean background", clean_hint: "Raise it if a grey box shows around your image.",
+    mono: "Black ink only", save: "Save preview", reset: "Reset position",
+    approx: "A rough preview. Real size and placement are set with the stencil on the day.",
+    gesture: "Drag to move · pinch to resize and turn", sample: "Sample photo", yours: "Your photo",
+    bad: "That image could not be opened. Try another one.",
+    places: { wrist:"Wrist", forearm:"Forearm", upper:"Upper arm", shoulder:"Shoulder", chest:"Chest", back:"Back", ribs:"Ribs", thigh:"Thigh", calf:"Calf", ankle:"Ankle", neck:"Neck" }
+  },
+  zh: {
+    ig_link: "在 Instagram 看我的纹身作品 ↗", book_link: "预约纹身",
+    h1: "纹之前，先试戴", lede: "把任何图案放到自己的皮肤上看看效果。免费、私密，全部在你的浏览器里完成。",
+    cta_t: "喜欢这个效果？", cta_p: "我在多伦多，可以帮你纹出来。在线看预估价，锁定档期。",
+    cta_btn: "预约这个纹身 →", cta_ig: "或者去 Instagram 看我的作品 ↗",
+    foot: "由多伦多纹身师 Yuwen Su 制作。",
+    s1: "选图案", design_btn: "上传自己的图", design_hint: "图片里只有图案、背景是浅色纯色时效果最好。截图请先把周围的状态栏等多余部分裁掉。",
+    s2: "加上你的照片", photo_btn: "拍照或选一张照片", photo_hint: "光线好、正对着拍的部位照片效果最好。",
+    privacy: "照片只留在这台设备上，在你的浏览器里绘制，不会上传到任何地方。",
+    s3: "摆位置", place: "部位", place_hint: "会给一个起始大小和皮肤弧度，下面可以再微调。",
+    size: "大小", rot: "旋转", curve: "皮肤弧度", curve_hint: "让图案包住手腕、脚踝这类比较圆的部位。",
+    op: "墨色深浅", clean: "去除底色", clean_hint: "图案周围有灰色方块时调高。",
+    mono: "只用黑色", save: "保存预览图", reset: "重置位置",
+    approx: "这只是大致预览。实际大小和位置当天贴转印稿时再确定。",
+    gesture: "拖动移动 · 双指缩放和旋转", sample: "示例照片", yours: "你的照片",
+    bad: "这张图片打不开，换一张试试。",
+    places: { wrist:"手腕", forearm:"前臂", upper:"上臂", shoulder:"肩膀", chest:"胸口", back:"后背", ribs:"肋骨", thigh:"大腿", calf:"小腿", ankle:"脚踝", neck:"脖子" }
+  }
+};
+let lang = "en";
+const t = k => T[lang][k];
+
+/* ---------- placement presets: starting size (% of photo width) and curve ---------- */
+const PLACES = {
+  wrist:{size:18,curve:55}, forearm:{size:28,curve:35}, upper:{size:30,curve:40}, shoulder:{size:32,curve:45},
+  chest:{size:36,curve:10}, back:{size:40,curve:5}, ribs:{size:32,curve:15}, thigh:{size:30,curve:25},
+  calf:{size:28,curve:35}, ankle:{size:16,curve:60}, neck:{size:18,curve:35}
+};
+
+/* ---------- sample designs (simple line drawings, stand-ins for real flash) ---------- */
+const svg = body => "data:image/svg+xml;utf8," + encodeURIComponent(
+  `<svg xmlns="http://www.w3.org/2000/svg" width="600" height="600" viewBox="0 0 120 120" fill="none" stroke="#111" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">${body}</svg>`);
+const SAMPLES = [
+  svg(`<path d="M60 14c3 28 18 43 46 46-28 3-43 18-46 46-3-28-18-43-46-46 28-3 43-18 46-46z"/><path d="M95 20v12M89 26h12M24 88v10M19 93h10"/>`),
+  svg(`<path d="M78 18a44 44 0 1 0 24 62A36 36 0 0 1 78 18z"/><path d="M92 40l2 6 6 2-6 2-2 6-2-6-6-2 6-2z" fill="#111"/><circle cx="70" cy="58" r="1.6" fill="#111"/>`),
+  svg(`<path d="M60 108V58"/><path d="M60 88c-12-2-18-9-20-18 11 0 18 6 20 18zM60 78c12-2 17-8 19-16-10 0-17 5-19 16z"/><circle cx="60" cy="38" r="7"/><path d="M60 31c-5-12 5-20 0-20s5 8 0 20zM67 38c12-5 20 5 20 0s-8 5-20 0zM60 45c5 12-5 20 0 20s-5-8 0-20zM53 38c-12 5-20-5-20 0s8-5 20 0z"/>`),
+  svg(`<path d="M60 100C22 74 18 50 28 38c9-11 25-9 32 4 7-13 23-15 32-4 10 12 6 36-32 62z"/><path d="M14 104L104 22M104 22l-14 2M104 22l-3 14M14 104l12-1M14 104l2-12"/>`)
+];
+
+/* ---------- state ---------- */
+const cv = $("cv"), ctx = cv.getContext("2d");
+const photoCv = document.createElement("canvas");   // the body photo, downscaled
+const prepCv = document.createElement("canvas");    // design on white, cleaned up
+const warpCv = document.createElement("canvas");    // design after the skin-curve warp
+let designImg = null, photoIsSample = true;
+const DEFAULTS = { x:.5, y:.5, size:28, rot:0, op:85, curve:35, clean:40, mono:false };
+const S = { ...DEFAULTS };
+
+/* ---------- sample arm, so there is something to see before a photo is added ---------- */
+function makeSampleArm(){
+  const w = 900, h = 1200, g = photoCv.getContext("2d");
+  photoCv.width = w; photoCv.height = h;
+  const bg = g.createLinearGradient(0,0,w,h); bg.addColorStop(0,"#d8d2c6"); bg.addColorStop(1,"#bdb5a6");
+  g.fillStyle = bg; g.fillRect(0,0,w,h);
+  g.save(); g.translate(w/2,h/2); g.rotate(-.1);
+  const arm = () => { g.beginPath(); g.moveTo(-215,-800); g.lineTo(215,-800); g.lineTo(150,800); g.lineTo(-150,800); g.closePath(); };
+  g.shadowColor = "rgba(40,30,20,.35)"; g.shadowBlur = 60; g.shadowOffsetX = 30; g.shadowOffsetY = 10;
+  const skin = g.createLinearGradient(-215,0,215,0);
+  [[0,"#a56f50"],[.12,"#c98f6e"],[.38,"#e9b796"],[.55,"#f0c3a4"],[.8,"#d39b7b"],[1,"#9c6648"]].forEach(([p,c]) => skin.addColorStop(p,c));
+  g.fillStyle = skin; arm(); g.fill();
+  g.shadowColor = "transparent"; arm(); g.clip();
+  for (let i = 0; i < 5000; i++){               // faint skin grain
+    g.fillStyle = Math.random() < .5 ? "rgba(255,255,255,.05)" : "rgba(90,50,30,.05)";
+    g.fillRect(Math.random()*440-220, Math.random()*1700-850, 2, 2);
+  }
+  g.restore();
+}
+
+/* ---------- design pipeline: image -> white-backed, cleaned -> curved ---------- */
+function prep(){
+  if (!designImg) return;
+  const k = Math.min(1, 800 / Math.max(designImg.naturalWidth, designImg.naturalHeight));
+  const w = Math.max(1, Math.round(designImg.naturalWidth * k)), h = Math.max(1, Math.round(designImg.naturalHeight * k));
+  prepCv.width = w; prepCv.height = h;
+  const g = prepCv.getContext("2d", { willReadFrequently:true });
+  g.fillStyle = "#fff"; g.fillRect(0,0,w,h); g.drawImage(designImg,0,0,w,h);
+  try {
+    // Levels: push the paper to pure white (so multiply drops it) and deepen the ink a little.
+    const d = g.getImageData(0,0,w,h), a = d.data, bp = 20, wp = 255 - S.clean * 1.05, span = wp - bp;
+    for (let i = 0; i < a.length; i += 4){
+      let r = a[i], gr = a[i+1], b = a[i+2];
+      if (S.mono) r = gr = b = .299*r + .587*gr + .114*b;
+      a[i]   = Math.max(0, Math.min(255, (r  - bp) / span * 255));
+      a[i+1] = Math.max(0, Math.min(255, (gr - bp) / span * 255));
+      a[i+2] = Math.max(0, Math.min(255, (b  - bp) / span * 255));
+    }
+    g.putImageData(d,0,0);
+  } catch (e) { /* tainted canvas: keep the image as it is */ }
+  warp();
+}
+function warp(){
+  const w = prepCv.width, h = prepCv.height, g = warpCv.getContext("2d");
+  warpCv.width = w; warpCv.height = h;
+  g.fillStyle = "#fff"; g.fillRect(0,0,w,h);
+  const th = S.curve / 100 * 1.3;               // half-angle of the cylinder the design wraps around
+  if (th < .02) { g.drawImage(prepCv,0,0); draw(); return; }
+  const n = Math.min(w, 160), sn = Math.sin(th), px = u => (Math.sin(u * th) / sn + 1) / 2 * w;
+  for (let i = 0; i < n; i++){                  // vertical strips, squeezed toward the edges
+    const x0 = px(-1 + 2*i/n), x1 = px(-1 + 2*(i+1)/n);
+    g.drawImage(prepCv, i*w/n, 0, w/n, h, x0, 0, x1 - x0 + .6, h);
+  }
+  draw();
+}
+
+/* ---------- render ---------- */
+function tattooBox(){
+  const tw = S.size / 100 * cv.width;
+  return { tw, th: tw * warpCv.height / warpCv.width, cx: S.x * cv.width, cy: S.y * cv.height };
+}
+function draw(clean){
+  if (cv.width !== photoCv.width || cv.height !== photoCv.height){ cv.width = photoCv.width; cv.height = photoCv.height; }
+  ctx.globalCompositeOperation = "source-over"; ctx.globalAlpha = 1; ctx.filter = "none";
+  ctx.drawImage(photoCv,0,0);
+  if (!designImg || !warpCv.width) return;
+  const { tw, th, cx, cy } = tattooBox();
+  ctx.save();
+  ctx.translate(cx,cy); ctx.rotate(S.rot * Math.PI / 180);
+  ctx.globalAlpha = S.op / 100;
+  ctx.globalCompositeOperation = "multiply";    // ink darkens skin; white paper vanishes; skin light and texture stay
+  ctx.filter = `blur(${(cv.width / 1800).toFixed(2)}px)`; // soften the edge slightly, like healed ink
+  ctx.drawImage(warpCv, -tw/2, -th/2, tw, th);
+  ctx.restore();
+  if (clean){                                    // small brand mark, only on the saved picture
+    const fs = Math.round(cv.width * .03);
+    ctx.save(); ctx.font = `600 ${fs}px "Space Grotesk",system-ui,sans-serif`; ctx.textAlign = "right"; ctx.textBaseline = "bottom";
+    ctx.shadowColor = "rgba(0,0,0,.55)"; ctx.shadowBlur = fs * .4; ctx.fillStyle = "rgba(255,255,255,.92)";
+    ctx.fillText("try-on · ys.tattoos", cv.width - fs * .8, cv.height - fs * .7); ctx.restore();
+  }
+  if (!clean){                                   // edit outline, left out of the saved picture
+    const px = cv.width / cv.getBoundingClientRect().width || 1;
+    ctx.save(); ctx.translate(cx,cy); ctx.rotate(S.rot * Math.PI / 180);
+    ctx.lineWidth = 1.5 * px; ctx.setLineDash([6*px, 5*px]); ctx.strokeStyle = "rgba(34,97,233,.9)";
+    ctx.strokeRect(-tw/2, -th/2, tw, th); ctx.restore();
+  }
+}
+
+/* ---------- loading images ---------- */
+function loadImage(src, done){
+  const im = new Image();
+  im.onload = () => done(im);
+  im.onerror = () => alert(t("bad"));
+  im.src = src;
+}
+function setDesign(src, sampleIndex){
+  loadImage(src, im => {
+    designImg = im; prep();
+    document.querySelectorAll("#designs button").forEach((b,i) => b.setAttribute("aria-pressed", i === sampleIndex));
+  });
+}
+function setPhoto(im){
+  const k = Math.min(1, 1600 / Math.max(im.naturalWidth, im.naturalHeight));
+  photoCv.width = Math.round(im.naturalWidth * k); photoCv.height = Math.round(im.naturalHeight * k);
+  photoCv.getContext("2d").drawImage(im,0,0,photoCv.width,photoCv.height);
+  photoIsSample = false; S.x = S.y = .5; paintText(); draw();
+}
+function fileInput(id, done){
+  $(id).addEventListener("change", e => {
+    const f = e.target.files[0]; if (!f) return;
+    const url = URL.createObjectURL(f);
+    loadImage(url, im => { done(im, url); });
+    e.target.value = "";
+  });
+}
+fileInput("design-file", (im) => { designImg = im; prep(); document.querySelectorAll("#designs button").forEach(b => b.setAttribute("aria-pressed","false")); });
+fileInput("photo-file", (im, url) => { setPhoto(im); URL.revokeObjectURL(url); });
+
+/* ---------- controls ---------- */
+const SLIDERS = { size:v => v.toFixed(0) + "%", rot:v => v.toFixed(0) + "°", curve:v => v.toFixed(0), op:v => v.toFixed(0) + "%", clean:v => v.toFixed(0) };
+function syncControls(){
+  for (const k in SLIDERS){ $(k).value = S[k]; $("o-" + k).textContent = SLIDERS[k](+S[k]); }
+  $("mono").checked = S.mono;
+}
+for (const k in SLIDERS) $(k).addEventListener("input", e => {
+  S[k] = +e.target.value; $("o-" + k).textContent = SLIDERS[k](S[k]);
+  k === "clean" ? prep() : k === "curve" ? warp() : draw();
+});
+$("mono").addEventListener("change", e => { S.mono = e.target.checked; prep(); });
+$("reset").addEventListener("click", () => {
+  const p = PLACES[document.querySelector("#places input:checked").value];
+  Object.assign(S, { x:.5, y:.5, rot:0, size:p.size, curve:p.curve }); syncControls(); warp();
+});
+$("places").addEventListener("change", e => {
+  const p = PLACES[e.target.value]; S.size = p.size; S.curve = p.curve; syncControls(); warp();
+});
+
+/* ---------- drag, pinch, wheel ---------- */
+const pts = new Map(); let g0 = null;
+const toCv = e => { const r = cv.getBoundingClientRect(); return { x:(e.clientX - r.left) * cv.width / r.width, y:(e.clientY - r.top) * cv.height / r.height }; };
+function startGesture(){
+  const p = [...pts.values()];
+  g0 = p.length === 1
+    ? { one:true, px:p[0].x, py:p[0].y, x:S.x, y:S.y }
+    : { one:false, d:Math.hypot(p[1].x - p[0].x, p[1].y - p[0].y), a:Math.atan2(p[1].y - p[0].y, p[1].x - p[0].x), size:S.size, rot:S.rot };
+}
+cv.addEventListener("pointerdown", e => { cv.setPointerCapture(e.pointerId); pts.set(e.pointerId, toCv(e)); startGesture(); });
+cv.addEventListener("pointermove", e => {
+  if (!pts.has(e.pointerId) || !g0) return;
+  pts.set(e.pointerId, toCv(e));
+  const p = [...pts.values()];
+  if (g0.one && p.length === 1){
+    S.x = Math.max(0, Math.min(1, g0.x + (p[0].x - g0.px) / cv.width));
+    S.y = Math.max(0, Math.min(1, g0.y + (p[0].y - g0.py) / cv.height));
+  } else if (!g0.one && p.length >= 2){
+    const d = Math.hypot(p[1].x - p[0].x, p[1].y - p[0].y), a = Math.atan2(p[1].y - p[0].y, p[1].x - p[0].x);
+    S.size = Math.max(4, Math.min(90, g0.size * d / g0.d));
+    let r = g0.rot + (a - g0.a) * 180 / Math.PI; r = ((r + 180) % 360 + 360) % 360 - 180; S.rot = r;
+    syncControls();
+  }
+  draw();
+});
+const endPointer = e => { pts.delete(e.pointerId); pts.size ? startGesture() : g0 = null; };
+cv.addEventListener("pointerup", endPointer); cv.addEventListener("pointercancel", endPointer);
+
+/* ---------- save / share ---------- */
+$("save").addEventListener("click", () => {
+  draw(true);
+  cv.toBlob(async blob => {
+    draw();
+    const file = new File([blob], "tattoo-tryon-ys-tattoos.jpg", { type:"image/jpeg" });
+    if (matchMedia("(pointer:coarse)").matches && navigator.canShare && navigator.canShare({ files:[file] })){
+      try { await navigator.share({ files:[file] }); return; } catch (e) { if (e.name === "AbortError") return; }
+    }
+    const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = file.name;
+    document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+  }, "image/jpeg", .92);
+});
+
+/* ---------- text ---------- */
+function paintText(){
+  document.documentElement.lang = lang === "zh" ? "zh-CN" : "en";
+  document.querySelectorAll("[data-i]").forEach(el => el.textContent = t(el.dataset.i));
+  $("photo-tag").textContent = t(photoIsSample ? "sample" : "yours");
+  document.querySelectorAll("#places span").forEach(s => s.textContent = t("places")[s.dataset.p]);
+  $("lang-en").setAttribute("aria-pressed", lang === "en"); $("lang-zh").setAttribute("aria-pressed", lang === "zh");
+}
+$("lang-en").onclick = () => { lang = "en"; paintText(); };
+$("lang-zh").onclick = () => { lang = "zh"; paintText(); };
+
+/* ---------- boot ---------- */
+$("places").innerHTML = Object.keys(PLACES).map(k =>
+  `<label class="chip"><input type="radio" name="place" value="${k}"${k === "forearm" ? " checked" : ""}><span data-p="${k}"></span></label>`).join("");
+SAMPLES.forEach((src, i) => {
+  const b = document.createElement("button"); b.type = "button"; b.setAttribute("aria-pressed", "false");
+  b.setAttribute("aria-label", "Design " + (i + 1));
+  const im = document.createElement("img"); im.src = src; im.alt = ""; b.appendChild(im);
+  b.onclick = () => setDesign(src, i); $("designs").appendChild(b);
+});
+makeSampleArm(); syncControls(); paintText(); draw(); setDesign(SAMPLES[0], 0);
+window.addEventListener("resize", () => draw());
+</script>
+</body>
+</html>
